@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDDqDxRCvk-GsPQHfqv6T1halfQxJi6ksg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>860865994214</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.YashThakkar.UniConnect</string>
+	<key>PROJECT_ID</key>
+	<string>uniconnect-c0916</string>
+	<key>STORAGE_BUCKET</key>
+	<string>uniconnect-c0916.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:860865994214:ios:63c20fe076272723510a27</string>
+	<key>DATABASE_URL</key>
+	<string>https://uniconnect-c0916-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
