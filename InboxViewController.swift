@@ -17,15 +17,15 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
     struct Notification {
         var message: String
         var timestamp: Date
-        var identifier: String // Unique identifier for each notification
-        var contactName: String? // To store the name of the contact if it's a user suggestion
-        var profilePictureURL: String? // URL for the profile picture
+        var identifier: String
+        var contactName: String?
+        var profilePictureURL: String?
         var phoneNumber: String?
     }
 
     var tableView: UITableView!
     var notifications = [Notification]()
-    var cachedMatches = [String]() // Cache for matched contacts
+    var cachedMatches = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,12 +101,10 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
    // MARK: - Contact Processing
     private func fetchAndProcessContacts() {
-        var taskID: UIBackgroundTaskIdentifier = .invalid // Initialize with an invalid value
+        var taskID: UIBackgroundTaskIdentifier = .invalid
 
-        // Request background time
         taskID = UIApplication.shared.beginBackgroundTask(withName: "FetchContactsTask") {
-            // This block is called if the background time is about to expire
-            // End the task if it's still running
+
             if taskID != .invalid {
                 UIApplication.shared.endBackgroundTask(taskID)
                 taskID = .invalid
@@ -140,8 +138,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     private func fetchContacts() -> [Contact] {
         var contacts = [Contact]()
-        // Add implementation to fetch contacts from the phone
-        // Ensure to handle permissions and format phone numbers as xxx-xxx-xxxx
+
         return contacts
     }
 
@@ -243,7 +240,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     func fetchCurrentUserName(completion: @escaping (String) -> Void) {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
-            completion("Unknown") // Handle the error appropriately
+            completion("Unknown")
             return
         }
 
@@ -251,7 +248,7 @@ class InboxViewController: UIViewController, UITableViewDelegate, UITableViewDat
         db.collection("users").whereField("uid", isEqualTo: currentUserID).getDocuments { querySnapshot, error in
             if let error = error {
                 print("Error fetching user: \(error)")
-                completion("Unknown") // Handle the error appropriately
+                completion("Unknown")
                 return
             }
 

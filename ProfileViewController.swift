@@ -18,7 +18,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     struct UserPost {
         var image: UIImage
         var documentID: String
-        var imagePath: String // This will store the full path to the image in Firebase Storage
+        var imagePath: String
     }
     
     var userPosts: [UserPost] = []
@@ -30,7 +30,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     var addPhotoButton: UIButton!
     
     
-    // New for stack
     
     var overlayCenterImageView: UIImageView!
     var overlayTopImageView: UIImageView!
@@ -46,7 +45,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     var backButton: UIButton!
     var deleteButton: UIButton!
     
-    var refreshControl = UIRefreshControl() //Refresh
+    var refreshControl = UIRefreshControl()
     
     var sliderTrackView: UIView!
     var sliderIndicatorView: UIView!
@@ -79,13 +78,13 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func setupSlider() {
         let sliderWidth: CGFloat = 4
-        let sliderHeight: CGFloat = view.bounds.height / 3 // Reduced the height for a shorter track
-        let sliderX = view.bounds.width - 20 // 20 units from the right edge
-        sliderY = (view.bounds.height - sliderHeight) / 2 // center vertically
+        let sliderHeight: CGFloat = view.bounds.height / 3
+        let sliderX = view.bounds.width - 20
+        sliderY = (view.bounds.height - sliderHeight) / 2
 
         let trackRect = CGRect(x: sliderX, y: sliderY, width: sliderWidth, height: sliderHeight)
 
-        let indicatorHeight: CGFloat = sliderHeight * 0.1 // Let's make the indicator 10% of the track's height
+        let indicatorHeight: CGFloat = sliderHeight * 0.1
         
         if let overlayImage = overlayCenterImageView?.image, let currentImageIndex = userPosts.firstIndex(where: { $0.image == overlayImage }) {
 
@@ -134,7 +133,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.profilePicImage.image = UIImage(named: "your_test_image_name") //REMOVE LATER
+        self.profilePicImage.image = UIImage(named: "your_test_image_name")
         profilePicImage.isUserInteractionEnabled = true
         profilePicImage.contentMode = .scaleAspectFill
         
@@ -149,7 +148,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         
         
         
-        //Name label
         userNameLabel = UILabel()
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
         userNameLabel.textAlignment = .center
@@ -158,7 +156,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         view.addSubview(userNameLabel)
         
         
-        // Edit Profile Button
         editProfileButton = UIButton()
         editProfileButton.setTitle("Edit Profile", for: .normal)
         editProfileButton.backgroundColor = .gray
@@ -167,7 +164,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         editProfileButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(editProfileButton)
         
-        // Add Photo Button
         addPhotoButton = UIButton()
         addPhotoButton.setTitle("Add", for: .normal)
         addPhotoButton.backgroundColor = .gray
@@ -232,7 +228,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
                         return
                     }
                     
-                    // Get the first document for the user (assuming each user has one document)
                     let userData = documents[0].data()
                     let profilePictureURLString = userData["profilePictureURL"] as? String ?? ""
                     let firstName = userData["firstname"] as? String ?? ""
@@ -265,7 +260,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: "cell")
         
         
-        //Refresh functionality
         refreshControl.addTarget(self, action: #selector(fetchUserPosts), for: .valueChanged)
         collectionView.refreshControl = refreshControl
         }
@@ -288,10 +282,10 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
                 return
             }
 
-            let group = DispatchGroup() // Used to track all asynchronous image fetching tasks
+            let group = DispatchGroup()
 
             var orderedImageURLs: [String] = []
-            var imageDict: [String: UserPost] = [:] // This will map each imageURL to its associated UserPost
+            var imageDict: [String: UserPost] = [:]
 
             for document in querySnapshot!.documents {
                 let data = document.data()
@@ -311,8 +305,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
             }
 
             group.notify(queue: .main) {
-                // Here, all the images have been fetched
-                self.userPosts = orderedImageURLs.compactMap { imageDict[$0] } // This will order the UserPosts based on the initial order of imageURLs
+                self.userPosts = orderedImageURLs.compactMap { imageDict[$0] }
                 self.collectionView.reloadData()
             }
         }
@@ -328,29 +321,24 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     
     func postImageToFirebase(image: UIImage) {
-        // Ensure the user is logged in
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             print("No user logged in!")
             return
         }
         let storageRef = Storage.storage().reference().child("UserPosts/\(UUID().uuidString).jpg")
         
-        // Convert image to JPEG data
         if let uploadData = image.jpegData(compressionQuality: 0.8) {
-            // Upload the image to Firebase Storage
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil {
                     print("Failed to upload image:", error!)
                     return
                 }
-                // Image uploaded successfully, now retrieve the download URL
                 storageRef.downloadURL { (url, error) in
                     if let downloadURL = url?.absoluteString {
-                        // Now let's create the post in Firestore
                         let db = Firestore.firestore()
                         let postDocument = db.collection("posts").document()
                         let postData: [String: Any] = [
-                            "postTime": Timestamp(date: Date()), // current time
+                            "postTime": Timestamp(date: Date()),
                             "imagePostURL": downloadURL,
                             "uid": currentUserUID
                         ]
@@ -360,7 +348,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
                                 print("Error writing document: \(error)")
                             } else {
                                 print("Document successfully written!")
-                                // Insert the new UserPost object into the userPosts array here
                                 self.userPosts.insert(UserPost(image: image, documentID: postDocument.documentID, imagePath: ""), at: 0)
                                 self.collectionView.reloadData()
                             }
@@ -376,7 +363,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     @objc func handleImageTap(_ sender: UITapGestureRecognizer) {
         if let imageView = sender.view as? UIImageView {
-            // Present the enlarged image view with the user's profile and name
             let enlargedImageVC = EnlargedPhotoViewController()
             enlargedImageVC.selectedImage = imageView.image
             enlargedImageVC.profileImage = self.profilePicImage.image
@@ -392,8 +378,7 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     
     
-    //Stack aid
-    // FIX THIS - KIND OF WORKS TOP AND BOTTOM VIEWS ARE NOT VISIBLE (SWIPE SPECIFIC)
+
     @objc func handleOverlaySwipeUp() {
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         feedbackGenerator.impactOccurred()
@@ -404,10 +389,8 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
             
             let previousCenterImage = overlayCenterImageView.image
             
-            // Update overlayCenterImageView
             overlayCenterImageView.image = userPosts[index + 1].image
 
-            // Check if overlayTopImageView exists
             if overlayTopImageView == nil {
                 let imageViewWidth = view.bounds.width * 0.9
                 let imageViewHeight = imageViewWidth * 0.6
@@ -425,12 +408,10 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
             }
             overlayTopImageView.image = previousCenterImage
             
-            // Update overlayBottomImageView if it exists
             if let overlayBottomImageView = overlayBottomImageView {
                 overlayBottomImageView.image = (index + 2 < userPosts.count) ? userPosts[index + 2].image : nil
             }
             
-            // Adjusting the slider's position
             let newSliderY = sliderTrackView.frame.origin.y + CGFloat(index + 1) * ((view.bounds.height / 3) * 0.66 / CGFloat(userPosts.count))
             let maxSliderY = sliderTrackView.frame.origin.y + (view.bounds.height / 3) * 0.66 - 20.0
             sliderIndicatorView.frame.origin.y = min(newSliderY, maxSliderY)
@@ -542,7 +523,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
                     self.userPosts.remove(at: index)
                 }
                 
-                // Update the UI (you might want to refresh the overlay view and the collection view here)
                 
             }
         }))
@@ -555,7 +535,6 @@ class ProfileViewController: UIViewController, UICollectionViewDelegate, UIColle
         editProfileVC.modalPresentationStyle = .popover
         present(editProfileVC, animated: true, completion: nil)
         
-        // Provide haptic feedback
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
             feedbackGenerator.prepare()
             feedbackGenerator.impactOccurred()
@@ -669,7 +648,7 @@ self.present(alert, animated: true, completion: nil)
         feedbackGenerator.prepare()
         feedbackGenerator.impactOccurred()
         
-        self.present(actionSheet, animated: true, completion: nil) // No need to present it twice, so remove the duplicate present call
+        self.present(actionSheet, animated: true, completion: nil)
     }
 
 
@@ -683,12 +662,10 @@ self.present(alert, animated: true, completion: nil)
         
         isUpdatingProfileImage = true
         
-        // Haptic Feedback
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
         feedbackGenerator.prepare()
         feedbackGenerator.impactOccurred()
         
-        // Check for photo library permission
         let status = PHPhotoLibrary.authorizationStatus()
         if status == .notDetermined {
             // Request access
@@ -718,8 +695,7 @@ self.present(alert, animated: true, completion: nil)
 }
                     }
                 } else {
-                    // Access has not been granted, handle accordingly
-                    // show an alert to the user here
+
                 }
             }
         } else if status == .authorized {
@@ -730,8 +706,7 @@ self.present(alert, animated: true, completion: nil)
                 self.present(self.imagePicker, animated: true, completion: nil)
             }
         } else {
-            // Access has not been granted, handle accordingly
-            // show an alert to the user here
+
         }
     }
 }
@@ -766,11 +741,10 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
     
     func presentCropViewController(image: UIImage) {
         let cropViewController = TOCropViewController(croppingStyle: .default, image: image)
-        // Set the desired aspect ratio here, for example, square
-        let aspectRatio = CGSize(width: 1, height: 1) // Use square aspect ratio for both profile and posts
+        let aspectRatio = CGSize(width: 1, height: 1)
         cropViewController.customAspectRatio = aspectRatio
-        cropViewController.aspectRatioLockEnabled = true // Lock the aspect ratio for both actions
-        cropViewController.resetAspectRatioEnabled = false // Users should not change the aspect ratio
+        cropViewController.aspectRatioLockEnabled = true
+        cropViewController.resetAspectRatioEnabled = false
         cropViewController.delegate = self
         self.present(cropViewController, animated: true, completion: nil)
     }
@@ -873,8 +847,8 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         overlayCenterImageView.contentMode = .scaleAspectFill
         overlayCenterImageView.clipsToBounds = true
         overlayCenterImageView.layer.cornerRadius = 15
-        overlayCenterImageView.layer.borderWidth = 2.0  // Adjust as needed for thickness
-        overlayCenterImageView.layer.borderColor = UIColor.white.cgColor  // Set to any color you prefer
+        overlayCenterImageView.layer.borderWidth = 2.0
+        overlayCenterImageView.layer.borderColor = UIColor.white.cgColor
         view.addSubview(overlayCenterImageView)
         
         // Setup the Delete Button
@@ -929,7 +903,6 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
             view.addSubview(overlayBottomImageView)
         }
 
-        // Add swipe gestures to these overlay views and ensure gestures don't affect ProfileVC
         swipeUpGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleOverlaySwipeUp))
         swipeUpGesture!.direction = .up
         swipeUpGesture!.cancelsTouchesInView = true
@@ -952,14 +925,12 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         deleteButton.removeFromSuperview()
         
 
-        // Remove the background views
         backgroundView?.removeFromSuperview()
         visualEffectView?.removeFromSuperview()
         
         overlayTopImageView = nil
         overlayBottomImageView = nil
 
-        // Remove the swipe gestures
         if let swipeUp = swipeUpGesture {
             view.removeGestureRecognizer(swipeUp)
         }
@@ -973,12 +944,9 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
 
 extension ProfileViewController: TOCropViewControllerDelegate {
     func cropViewController(_ cropViewController: TOCropViewController, didCropTo image: UIImage, with cropRect: CGRect, angle: Int) {
-        // Use the cropped image according to the action
         if isUpdatingProfileImage {
-            // Update profile picture
             uploadProfileImage(pickedImage: image)
         } else {
-            // Post image to Firebase
             postImageToFirebase(image: image)
         }
         cropViewController.dismiss(animated: true, completion: nil)
@@ -1052,7 +1020,6 @@ extension ProfileViewController: UIViewControllerTransitioningDelegate {
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        // For now, we'll use the same animation for dismissal. You can customize this further if needed.
         return PopAnimator()
     }
 }

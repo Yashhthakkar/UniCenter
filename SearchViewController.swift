@@ -1,5 +1,4 @@
-//  Search with segue in development
-//
+// SearchViewController.swift
 
 import UIKit
 import Firebase
@@ -180,7 +179,6 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedUser = searchBar.isActive ? filteredUsers[indexPath.row] : users[indexPath.row]
         
-        // Add the UID of the selected user to the current user's searchHistory
         let currentUserUID = Auth.auth().currentUser?.uid ?? ""
         let usersRef = Firestore.firestore().collection("users")
 
@@ -190,7 +188,6 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             } else {
                 for document in snapshot!.documents {
                     let docID = document.documentID
-                    // Update searchHistory array in Firestore and handle potential errors
                     usersRef.document(docID).updateData([
                         "searchHistory": FieldValue.arrayUnion([selectedUser.uid])
                     ]) { err in
@@ -204,7 +201,6 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         }
 
-        // Show the user profile
         showUserProfile(for: selectedUser)
     }
     
@@ -216,15 +212,12 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         print("Updating search results...")
         guard let searchText = searchController.searchBar.text?.lowercased() else { return }
 
-        // Get the current user UID and print it for debugging
         let currentUserUID = Auth.auth().currentUser?.uid ?? ""
         print("Current user UID: \(currentUserUID)")
 
         if searchText.isEmpty {
-            // If the search text is empty, show all users
             filteredUsers = users
         } else {
-            // Filter users based on search text
             filteredUsers = users.filter { user in
                 let fullName = "\(user.firstName) \(user.lastName)"
                 return fullName.lowercased().contains(searchText)
@@ -238,7 +231,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
 
     func showUserProfile(for user: User) {
-        self.searchBar.searchBar.resignFirstResponder() // Dismiss the keyboard
+        self.searchBar.searchBar.resignFirstResponder()
         let userProfileVC = UserProfileViewController(user: user)
         userProfileVC.user = user
         self.navigationController?.pushViewController(userProfileVC, animated: true)
@@ -247,8 +240,8 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
 struct User {
     var uid: String
-    var firstName: String // Added firstName property
-    var lastName: String // Added lastName property
+    var firstName: String
+    var lastName: String
     var profileImageUrl: String
 
     init(dictionary: [String: Any]) {

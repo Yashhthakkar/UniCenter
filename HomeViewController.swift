@@ -11,24 +11,20 @@ import FirebaseFirestore
 class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     
-    // Recommendation algorithm instance
     let recommendationAlgorithm = RecommendationAlgorithm()
     
-    // List of all user profiles fetched
     var userProfiles: [RecommendationAlgorithm.UserProfile] = []
     
     var likedUserIDs: Set<String> = []
     
     
-    // List of recommended profiles based on the current user's profile
     var recommendedProfiles: [RecommendationAlgorithm.UserProfile] = []
     
     var postsMapping: [UIPageViewController: [RecommendationAlgorithm.Post]] = [:]
     
-    // A dictionary to map each UIPageViewController to its corresponding posts
     var postsForPageVC: [UIPageViewController: [RecommendationAlgorithm.Post]] = [:]
 
-    var recommendations: [User] = [] // Placeholder for your user recommendations data
+    var recommendations: [User] = []
     var collectionView: UICollectionView!
     var lastUserCard: UIView?
     let userCardsScrollView = UIScrollView()
@@ -118,7 +114,7 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(toggleMenu), for: .touchUpInside)
         
-        button.layer.cornerRadius = 25 // half of the width/height
+        button.layer.cornerRadius = 25
         button.clipsToBounds = true
         
         return button
@@ -148,7 +144,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
     
     @objc func toggleMenu() {
         if containerView.transform == home {
-            // If it's in the initial state, first shrink the container
             UIView.animate(withDuration: 0.4, animations: {
                 self.containerView.layer.cornerRadius = 40
                 let x = self.screen.width * 0.5
@@ -159,14 +154,11 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
                 self.menuWrapperView.transform = scaledAndTranslatedTransform
                 self.userCardsScrollView.transform = scaledAndTranslatedTransform
             }) { _ in
-                // After shrinking, reveal the menu
                 self.menuTableView.isHidden = false
             }
         } else {
-            // If it's not in the initial state, first hide the menu
             self.menuTableView.isHidden = true
 
-            // Then expand the container
             UIView.animate(withDuration: 0.4, animations: {
                 self.containerView.transform = self.home
                 self.menuWrapperView.transform = self.home
@@ -183,7 +175,7 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         UIView.animate(withDuration: 0.4) {
             self.containerView.transform = self.home
             self.menuWrapperView.transform = self.home
-            self.userCardsScrollView.transform = self.home // Added this line
+            self.userCardsScrollView.transform = self.home
             self.containerView.layer.cornerRadius = 0
         }
     }
@@ -370,16 +362,13 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
             DispatchQueue.main.async {
                 if self.recommendedProfiles.isEmpty {
                     print("No new recommendations available.")
-                    // Optionally show a message to the user
                 } else {
-                    // Update UI with new data
                     for user in self.recommendedProfiles {
                         if let posts = self.allRecommendedPosts[user.uid] {
                             self.updateUIWithRecommendation(user: user, posts: posts)
                         }
                     }
                 }
-                // End refreshing state
                 sender.endRefreshing()
             }
         }
@@ -414,7 +403,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         recommendationAlgorithm.fetchAllUsers { [weak self] allUsers in
             guard let self = self, let currentUser = allUsers.first(where: { $0.uid == Auth.auth().currentUser?.uid }) else { return }
 
-            // Fetch posts for all users
             let group = DispatchGroup()
             var usersWithPosts: [RecommendationAlgorithm.UserProfile: [RecommendationAlgorithm.Post]] = [:]
 
@@ -430,12 +418,10 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
                 }
             }
 
-            // Once all posts are fetched
             group.notify(queue: .main) {
                 let usersHavingPosts = usersWithPosts.keys
                 self.recommendedProfiles = self.recommendationAlgorithm.recommendProfiles(for: currentUser, from: Array(usersHavingPosts))
 
-                // Update UI with recommended profiles
                 for user in self.recommendedProfiles {
                     if let posts = usersWithPosts[user] {
                         self.allRecommendedPosts[user.uid] = posts
@@ -443,7 +429,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
                     }
                 }
 
-                // Trigger completion handler if provided
                 completion?()
             }
         }
@@ -456,8 +441,8 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
 
     private func clearUserCards() {
         userCardsScrollView.subviews.forEach { $0.removeFromSuperview() }
-        lastUserCard = nil  // Reset the lastUserCard
-        userCardCount = 0   // Reset the userCardCount
+        lastUserCard = nil
+        userCardCount = 0
     }
 
 
@@ -482,18 +467,15 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
 
         let constraints = [
             
-            // Profile image constraints
             profileImageView.topAnchor.constraint(equalTo: userCard.topAnchor, constant: 10),
             profileImageView.leadingAnchor.constraint(equalTo: userCard.leadingAnchor, constant: 10),
             profileImageView.widthAnchor.constraint(equalToConstant: 48),
             profileImageView.heightAnchor.constraint(equalToConstant: 48),
             
-            // Name label constraints
             nameLabel.topAnchor.constraint(equalTo: userCard.topAnchor, constant: 10),
             nameLabel.leadingAnchor.constraint(equalTo: profileImageView.trailingAnchor, constant: 10),
             nameLabel.trailingAnchor.constraint(equalTo: userCard.trailingAnchor, constant: -10),
             
-            // Image slide view constraints
             imageSlideView.view.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             imageSlideView.view.leadingAnchor.constraint(equalTo: userCard.leadingAnchor),
             imageSlideView.view.trailingAnchor.constraint(equalTo: userCard.trailingAnchor),
@@ -537,7 +519,7 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
                         if let firstImage = postImages.first {
                             let firstImageVC = ImageViewController()
                             firstImageVC.image = firstImage
-                            // Only setting the first view controller to avoid the crash.
+                            
                             self.imageSlideView.setViewControllers([firstImageVC], direction: .forward, animated: false, completion: nil)
                         }
                     }
@@ -550,10 +532,8 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
     
     
     func setupPosts(in pageViewController: UIPageViewController, with posts: [RecommendationAlgorithm.Post]) {
-        // Store the posts for this particular pageViewController
         postsForPageVC[pageViewController] = posts
 
-        // Load the first view controller
         if let firstPost = posts.first, let imageVC = createImageViewController(for: firstPost, atIndex: 0) {
             pageViewController.setViewControllers([imageVC], direction: .forward, animated: true, completion: nil)
         }
@@ -582,7 +562,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         print("Setting tag for user \(user.uid) as \(userCard.tag)")
         userCardsScrollView.addSubview(userCard)
         
-        // Set up and add profileImageView
         let profileImageView = UIImageView()
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.cornerRadius = 24
@@ -600,7 +579,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
             }.resume()
         }
         
-        // Set up and add nameLabel
         let nameLabel = UILabel()
         nameLabel.font = UIFont.systemFont(ofSize: 20)
         nameLabel.text = "\(user.firstname) \(user.lastname)"
@@ -677,7 +655,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         
         ellipsisButton.tag = userCard.tag
 
-        // Add action to the ellipsis button
         ellipsisButton.addTarget(self, action: #selector(ellipsisButtonTapped(_:)), for: .touchUpInside)
 
         // Set constraints for ellipsisButton
@@ -872,14 +849,11 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
             }
         })
 
-        // Check and dismiss the speech bubble if it's already visible
         if let existingSpeechBlock = findSpeechBlockInView(userCard) {
             dismissSpeechBlock(existingSpeechBlock)
         }
 
-        // Show Speech Block only if heart icon is being filled
         if !isHeartFilled {
-            // Add new Speech Block
             addSpeechBlockToUserCard(heartIcon, userCard)
         }
     }
@@ -889,16 +863,13 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
 
     
     private func updateFirestoreForLike(currentUserID: String, likedUserID: String, isHeartFilled: Bool) {
-        // Assuming `currentUserID` is the UID of the current user and we are using it to find the user's document
         let userRef = Firestore.firestore().collection("users").whereField("uid", isEqualTo: currentUserID)
 
         userRef.getDocuments { (snapshot, error) in
             if let snapshot = snapshot, !snapshot.isEmpty {
-                // Assuming there is only one document per user
                 let document = snapshot.documents.first
                 let docID = document?.documentID ?? ""
 
-                // Proceed with the update
                 let updateRef = Firestore.firestore().collection("users").document(docID)
                 if isHeartFilled {
                     updateRef.updateData(["attractedTo": FieldValue.arrayRemove([likedUserID])])
@@ -926,7 +897,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
             let likedUserData = likedUserDocument?.data()
 
             if let attractedTo = likedUserData?["attractedTo"] as? [String], attractedTo.contains(currentUserID) {
-                // Mutual like found, update 'matchedWith' for both users
                 self?.updateMatchedWith(currentUserID: currentUserID, otherUserID: likedUserID)
                 self?.updateMatchedWith(currentUserID: likedUserID, otherUserID: currentUserID)
             }
@@ -1023,7 +993,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         guard let imageUrl = URL(string: post.imagePostURL) else { return nil }
         let imageVC = ImageViewController()
         imageVC.imageIndex = index
-        // Load the image asynchronously
         URLSession.shared.dataTask(with: imageUrl) { (data, _, _) in
             if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
@@ -1056,7 +1025,6 @@ class HomeViewController: UIViewController, UIPageViewControllerDataSource, UIPa
         let imageVC = ImageViewController()
         imageVC.imageIndex = index
         
-        // Load the image for the ImageViewController
         if let imageUrl = URL(string: post.imagePostURL) {
             URLSession.shared.dataTask(with: imageUrl) { (data, _, _) in
                 if let data = data, let image = UIImage(data: data) {
@@ -1111,8 +1079,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func presentAttractedToPage() {
-        let attractedToVC = AttractedToPage() // Replace with the actual initialization method
-        attractedToVC.modalPresentationStyle = .popover // Optional: Choose the presentation style
+        let attractedToVC = AttractedToPage()
+        attractedToVC.modalPresentationStyle = .popover
         present(attractedToVC, animated: true, completion: nil)
     }
     
@@ -1157,13 +1125,11 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecommendationCell", for: indexPath) as! RecommendationCell
-        // Configure your cell with data from recommendations[indexPath.item]
         return cell
     }
 }
 
 class RecommendationCell: UICollectionViewCell {
-    // Initialization and setup for your custom cell
 }
     
 extension UIImage {

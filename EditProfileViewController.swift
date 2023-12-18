@@ -8,7 +8,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     
     var userDocumentId: String?
     
-    // Fields
     let firstNameTextField = UITextField()
     let lastNameTextField = UITextField()
     let dobTextField = UITextField()
@@ -217,7 +216,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     }
     
     
-    // Function to add a title label
     func addTitleLabel(text: String) -> UILabel {
         let titleLabel = UILabel()
         titleLabel.text = text
@@ -303,7 +301,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         print("Starting deletion process for user: \(uid)")
         let db = Firestore.firestore()
 
-        // Step 1: Delete all the post documents
         db.collection("posts").whereField("uid", isEqualTo: uid).getDocuments { [weak self] (querySnapshot, error) in
             if let error = error {
                 print("Error fetching user posts: \(error.localizedDescription)")
@@ -323,7 +320,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
                 }
                 print("All posts deleted successfully")
 
-                // Step 2: Delete the user document
                 self?.deleteUserDocument(uid: uid)
             }
         }
@@ -332,7 +328,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     func deleteUserDocument(uid: String) {
         let db = Firestore.firestore()
 
-        // Query the "users" collection for the document with the matching uid
         db.collection("users").whereField("uid", isEqualTo: uid).getDocuments { [weak self] (querySnapshot, error) in
             if let error = error {
                 print("Error finding user document: \(error.localizedDescription)")
@@ -346,7 +341,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
 
             print("Found user document with UID: \(uid), attempting to delete")
 
-            // Delete the found document
             document.reference.delete { error in
                 if let error = error {
                     print("Error deleting user document: \(error.localizedDescription)")
@@ -393,7 +387,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
                 window.rootViewController = navigationController
                 window.makeKeyAndVisible()
 
-                // Present alert on top of WelcomeVC
                 let alert = UIAlertController(title: "Account Deleted", message: "Your account and data has been deleted from UniCenter.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 navigationController.present(alert, animated: true, completion: nil)
@@ -414,7 +407,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         firstAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         firstAlertController.addAction(UIAlertAction(title: "Delete Account", style: .destructive) { [weak self] _ in
-            // Present the second confirmation alert
             self?.presentSecondConfirmationAlert()
         })
 
@@ -431,10 +423,7 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         secondAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         secondAlertController.addAction(UIAlertAction(title: "Delete Account", style: .destructive) { [weak self] _ in
-            // Handle account deletion logic here
-            // This block will be executed when the user confirms the deletion
             
-            // Delete the user account from Firebase Authentication
             if let user = Auth.auth().currentUser {
                 self?.deleteUserDataAndPosts(uid: user.uid)
             }
@@ -444,7 +433,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     }
 
     
-    // Existing Methods
     @objc func segmentChanged() {
         let isPublic = segmentedControl.selectedSegmentIndex == 0
         firstNameTextField.isHidden = !isPublic
@@ -453,27 +441,22 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         genderTextField.isHidden = !isPublic
         bioTextField.isHidden = !isPublic
 
-        // New Fields
         dietPreferenceTextField.isHidden = !isPublic
         fitnessLevelTextField.isHidden = !isPublic
         raceTextField.isHidden = !isPublic
         religionTextField.isHidden = !isPublic
         yearTextField.isHidden = !isPublic
 
-        // Hide or show lines based on the segment
         if isPublic {
             showLines()
         } else {
             hideLines()
         }
 
-        // Calculate the vertical position for the "Delete Account" button
         let buttonY = 5 * view.frame.height / 6 - deleteAccountButton.frame.height / 2
         
-        // Set the button's frame
         deleteAccountButton.frame = CGRect(x: 30, y: buttonY, width: view.frame.width - 60, height: 40)
         
-        // Toggle visibility of 'Change Password' and 'Delete Account' buttons based on the segment
         changePasswordButton.isHidden = isPublic
         deleteAccountButton.isHidden = isPublic
     }
@@ -535,7 +518,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             updateData["bio"] = newBio
         }
         
-        // New Field Data
         if let newDietPreference = dietPreferenceTextField.text {
             updateData["dietPreference"] = newDietPreference
         }
@@ -556,33 +538,26 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             updateData["year"] = newYear
         }
 
-        // Add uid to updateData to ensure UserProfile can be initialized
         updateData["uid"] = uid
 
-        // Update the document
         userRef.updateData(updateData) { [weak self] error in
             if let error = error {
                 print("Error updating document: \(error)")
             } else {
                 print("Profile successfully updated!")
 
-                // Initialize the RecommendationAlgorithm
                 let recommendationAlgorithm = RecommendationAlgorithm()
 
-                // Initialize UserProfile with the updated data
                 if let updatedUserProfile = RecommendationAlgorithm.UserProfile(dictionary: updateData) {
-                    // Update categories based on the new bio
                     recommendationAlgorithm.updateUserCategories(updatedUserProfile)
                 }
 
-                // Dismiss the edit profile view
                 self?.dismiss(animated: true, completion: nil)
             }
         }
     }
     
     private func setupConstraints() {
-        // Existing Constraints
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         firstNameTextField.translatesAutoresizingMaskIntoConstraints = false
         lastNameTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -590,7 +565,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         genderTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        // New Field Constraints
         dietPreferenceTextField.translatesAutoresizingMaskIntoConstraints = false
         fitnessLevelTextField.translatesAutoresizingMaskIntoConstraints = false
         raceTextField.translatesAutoresizingMaskIntoConstraints = false
@@ -598,7 +572,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         yearTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            // Existing Constraints
             segmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25),
             segmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 96),
             segmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -96),
@@ -623,7 +596,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             bioTextField.leadingAnchor.constraint(equalTo: firstNameTextField.leadingAnchor),
             bioTextField.trailingAnchor.constraint(equalTo: firstNameTextField.trailingAnchor),
             
-            // New Field Constraints
             dietPreferenceTextField.topAnchor.constraint(equalTo: bioTextField.bottomAnchor, constant: 16),
             dietPreferenceTextField.leadingAnchor.constraint(equalTo: firstNameTextField.leadingAnchor),
             dietPreferenceTextField.trailingAnchor.constraint(equalTo: firstNameTextField.trailingAnchor),
@@ -647,7 +619,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     }
     
     private func fetchUserDetails() {
-        // Get current user UID
         guard let uid = Auth.auth().currentUser?.uid else {
             print("Error: No UID found.")
             return
@@ -689,7 +660,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
                 self.bioTextField.text = bio
             }
             
-            // New Fields
             if let dietPreference = userData["dietPreference"] as? String {
                 self.dietPreferenceTextField.text = dietPreference
             }
@@ -712,7 +682,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
     }
     
-    // UIPickerView DataSource Methods
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -755,7 +724,6 @@ class EditProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
     }
     
-    // New Field Done Pressed
     @objc func dietPreferenceDonePressed() {
         dietPreferenceTextField.text = dietPreferenceOptions[dietPreferencePicker.selectedRow(inComponent: 0)]
         view.endEditing(true)

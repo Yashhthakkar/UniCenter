@@ -20,18 +20,15 @@ class EnlargedPhotoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Assuming the images array and selectedIndex are already populated
         let currentImage = images[selectedIndex]
 
-        // Setup the centerImageView
         centerImageView = UIImageView(image: currentImage)
         centerImageView.frame = self.view.bounds
         centerImageView.contentMode = .scaleAspectFill
         centerImageView.clipsToBounds = true
-        centerImageView.layer.cornerRadius = 15 // for rounded edges
+        centerImageView.layer.cornerRadius = 15
         self.view.addSubview(centerImageView)
 
-        // Setup the topImageView (for the previous image)
         if selectedIndex > 0 {
             topImageView = UIImageView(image: images[selectedIndex - 1])
             let topFrame = CGRect(x: centerImageView.frame.origin.x + (centerImageView.frame.width * 0.1),
@@ -41,12 +38,11 @@ class EnlargedPhotoViewController: UIViewController {
             topImageView.frame = topFrame
             topImageView.contentMode = .scaleAspectFill
             topImageView.clipsToBounds = true
-            topImageView.layer.cornerRadius = 12 // Slightly smaller rounded edges
-            topImageView.alpha = 0.6 // Dimmed effect
+            topImageView.layer.cornerRadius = 12
+            topImageView.alpha = 0.6
             self.view.addSubview(topImageView)
         }
 
-        // Setup the bottomImageView (for the next image)
         if selectedIndex < images.count - 1 {
             bottomImageView = UIImageView(image: images[selectedIndex + 1])
             let bottomFrame = CGRect(x: centerImageView.frame.origin.x + (centerImageView.frame.width * 0.1),
@@ -56,12 +52,11 @@ class EnlargedPhotoViewController: UIViewController {
             bottomImageView.frame = bottomFrame
             bottomImageView.contentMode = .scaleAspectFill
             bottomImageView.clipsToBounds = true
-            bottomImageView.layer.cornerRadius = 12 // Slightly smaller rounded edges
-            bottomImageView.alpha = 0.6 // Dimmed effect
+            bottomImageView.layer.cornerRadius = 12
+            bottomImageView.alpha = 0.6
             self.view.addSubview(bottomImageView)
         }
 
-        // Add swipe gestures (to be implemented)
         let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeUp))
         swipeUp.direction = .up
         self.view.addGestureRecognizer(swipeUp)
@@ -106,11 +101,9 @@ class EnlargedPhotoViewController: UIViewController {
     }
 
     func refreshImageViews() {
-        // Update the images for the views based on the new selectedIndex
         
         centerImageView.image = images[selectedIndex]
         
-        // Update topImageView if there's a previous image, or hide it if there isn't
         if selectedIndex > 0 {
             topImageView.isHidden = false
             topImageView.image = images[selectedIndex - 1]
@@ -118,7 +111,6 @@ class EnlargedPhotoViewController: UIViewController {
             topImageView.isHidden = true
         }
         
-        // Update bottomImageView if there's a next image, or hide it if there isn't
         if selectedIndex < images.count - 1 {
             bottomImageView.isHidden = false
             bottomImageView.image = images[selectedIndex + 1]

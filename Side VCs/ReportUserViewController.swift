@@ -60,10 +60,8 @@ class ReportUserViewController: UIViewController {
             questionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
 
-        // Setup option buttons
         setupOptionButtons()
 
-        // Setup Submit Button
             submitButton.setTitle("Submit", for: .normal)
             submitButton.backgroundColor = UIColor.systemBlue // Choose your desired color
             submitButton.setTitleColor(.white, for: .normal)
@@ -112,7 +110,6 @@ class ReportUserViewController: UIViewController {
     @objc func optionSelected(_ sender: UIButton) {
         selectedOption = sender.title(for: .normal)
         print("Option selected: \(selectedOption ?? "none")")
-        // Change appearance of selected and non-selected buttons
         for subview in view.subviews {
             if let button = subview as? UIButton, options.contains(button.title(for: .normal) ?? "") {
                 button.backgroundColor = button == sender ? .gray : .clear

@@ -164,11 +164,10 @@ class UserTableViewCell: UITableViewCell {
 
     private func loadProfileImage(from urlString: String) {
         guard let url = URL(string: urlString) else {
-            profileImageView.image = UIImage(named: "defaultProfileImage") // Replace with your default image
+            profileImageView.image = UIImage(named: "defaultProfileImage")
             return
         }
 
-        // Simple network call to fetch the image
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
@@ -183,23 +182,18 @@ class UserTableViewCell: UITableViewCell {
 extension AttractedToPage {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Perform the delete action
             deleteUserInfo(at: indexPath)
         }
     }
 
     private func deleteUserInfo(at indexPath: IndexPath) {
-        // Get the UID of the user to be removed
         let uidToRemove = attractedUserIDs[indexPath.row]
 
-        // Remove the user info from the local array
         attractedUserInfo.remove(at: indexPath.row)
         attractedUserIDs.remove(at: indexPath.row)
 
-        // Update the table view
         tableView.deleteRows(at: [indexPath], with: .automatic)
 
-        // Update Firestore to reflect this change
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
         // Find the document with the matching UID
@@ -214,7 +208,6 @@ extension AttractedToPage {
                 return
             }
 
-            // Update the attractedTo array in the found document
             document.reference.updateData([
                 "attractedTo": FieldValue.arrayRemove([uidToRemove])
             ]) { error in
@@ -229,7 +222,7 @@ extension AttractedToPage {
 
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true // All rows are editable
+        return true
     }
 
 }

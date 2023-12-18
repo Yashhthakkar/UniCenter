@@ -1,4 +1,4 @@
-// UserProfileVC works but entering from ends does not initialize top/bottom view
+// UserProfileVC
 import UIKit
 import Firebase
 
@@ -54,12 +54,9 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         let tappedImage = userPosts[index]
         currentImageIndex = index
         
-        // Make the navigation back button disappear
         self.navigationItem.leftBarButtonItem = nil
-        // Disable the default back button
         self.navigationItem.hidesBackButton = true
         
-        // Add blur effect to background
         let blurEffect = UIBlurEffect(style: .dark)
         visualEffectView = UIVisualEffectView(effect: blurEffect)
         visualEffectView.frame = view.bounds
@@ -85,11 +82,10 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         overlayCenterImageView.contentMode = .scaleAspectFill
         overlayCenterImageView.clipsToBounds = true
         overlayCenterImageView.layer.cornerRadius = 15
-        overlayCenterImageView.layer.borderWidth = 3.0 // Adjust as needed for thickness
-        overlayCenterImageView.layer.borderColor = UIColor.white.cgColor // Set to any color you prefer
+        overlayCenterImageView.layer.borderWidth = 3.0
+        overlayCenterImageView.layer.borderColor = UIColor.white.cgColor
         view.addSubview(overlayCenterImageView)
 
-        // Setup the overlayTopImageView (previous image)
         if index > 0 {
             self.overlayTopImageView = UIImageView(image: userPosts[index - 1])
             self.overlayTopImageView.frame = CGRect(x: imageViewX + (imageViewWidth * 0.1), y: imageViewY - imageViewHeight * 0.8 - 20, width: imageViewWidth * 0.8, height: imageViewHeight * 0.8)
@@ -188,7 +184,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
     
     
     func setupSlider() {
-        // Create the track for the slider
         let trackWidth: CGFloat = 4
         let trackHeight: CGFloat = (view.bounds.height / 3) * 0.66
         let trackX = view.bounds.width - 20
@@ -200,7 +195,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         sliderTrackView.layer.cornerRadius = trackWidth / 2
         view.addSubview(sliderTrackView)
         
-        // Create the green indicator inside the track
         let indicatorHeight: CGFloat = trackHeight * 0.1
         if let currentImageIndex = currentImageIndex {
             let positionPercentage = CGFloat(currentImageIndex) / CGFloat(userPosts.count - 1)
@@ -224,14 +218,12 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         sliderIndicatorView.removeFromSuperview()
         backButton.removeFromSuperview()
         
-        // Remove the background views
         backgroundView?.removeFromSuperview()
         visualEffectView?.removeFromSuperview()
         
         self.navigationItem.leftBarButtonItem = nil
         self.navigationItem.hidesBackButton = false
         
-        // Re-enable the original "back" button
         self.navigationItem.hidesBackButton = false
         self.navigationItem.leftBarButtonItem = nil
         
@@ -239,7 +231,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
     }
     
     @objc func refreshData() {
-        // Fetch the data again
         fetchUserPosts()
     }
     
@@ -256,7 +247,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         }.resume()
     }
     
-    // Initializer
     init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
@@ -321,7 +311,7 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         // Setup pull-to-refresh
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         collectionView.addSubview(refreshControl)
-        collectionView.alwaysBounceVertical = true // ensures the refresh control will always work
+        collectionView.alwaysBounceVertical = true
 
         view.addSubview(collectionView)
         
@@ -343,19 +333,16 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
         
         let isLiked = likedUserIDs.contains(profileUserID)
         if isLiked {
-            // User is currently liked, remove from likes and update UI
             likedUserIDs.remove(profileUserID)
             heartButton.setImage(UIImage(systemName: "heart"), for: .normal)
             updateFirestoreForLike(currentUserID: currentUserID, likedUserID: profileUserID, isLiked: false)
         } else {
-            // User is not currently liked, add to likes and update UI
             likedUserIDs.insert(profileUserID)
             heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
             updateFirestoreForLike(currentUserID: currentUserID, likedUserID: profileUserID, isLiked: true)
             checkForMutualLike(currentUserID: currentUserID, likedUserID: profileUserID)
         }
         
-        // Haptic feedback
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         feedbackGenerator.impactOccurred()
     }
@@ -371,7 +358,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
             let likedUserData = likedUserDocument?.data()
 
             if let attractedTo = likedUserData?["attractedTo"] as? [String], attractedTo.contains(currentUserID) {
-                // Mutual like found, update 'matchedWith' for both users
                 self?.updateMatchedWith(currentUserID: currentUserID, otherUserID: likedUserID)
                 self?.updateMatchedWith(currentUserID: likedUserID, otherUserID: currentUserID)
             }
@@ -487,10 +473,10 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
                     return
                 }
 
-                let group = DispatchGroup() // Used to track all asynchronous image fetching tasks
+                let group = DispatchGroup()
 
                 var orderedImageURLs: [String] = []
-                var imageDict: [String: UIImage] = [:] // This will map each imageURL to its associated UIImage
+                var imageDict: [String: UIImage] = [:]
 
                 for document in snapshot!.documents {
                     let data = document.data()
@@ -502,15 +488,14 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
                                 if let data = data, let image = UIImage(data: data) {
                                     imageDict[imageURL] = image
                                 }
-                                group.leave() // Leave group when the task is finished
+                                group.leave()
                             }.resume()
                         }
                     }
                 }
 
                 group.notify(queue: .main) {
-                    // Here, all the images have been fetched
-                    self.userPosts = orderedImageURLs.compactMap { imageDict[$0] } // This will order the images based on the initial order of imageURLs
+                    self.userPosts = orderedImageURLs.compactMap { imageDict[$0] }
                     self.collectionView.reloadData()
                 }
             }
@@ -526,7 +511,6 @@ class UserProfileViewController: UIViewController, UICollectionViewDelegate, UIC
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         
-        // Clear any previous content in the cell
         for subview in cell.contentView.subviews {
             subview.removeFromSuperview()
         }

@@ -61,7 +61,6 @@ class SignUpViewController: UIViewController {
             return "Please fill in all fields."
         }
         
-        // TODO: ADD CHECK TO SEE IF EMAIL IS REALLY A COLLEGE EMAIL!!!!
         
         let email = collegeEmailTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
             if !email.hasSuffix("@gatech.edu") {
@@ -140,13 +139,7 @@ class SignUpViewController: UIViewController {
         errorLabel.alpha = 1
     }
     
-    /*func transitionToHome() {
-        let homeViewController =
-        storyboard?.instantiateViewController(identifier: Constants.Storyboard.homeViewController) as? HomeViewController
-        
-        view.window?.rootViewController = homeViewController
-        view.window?.makeKeyAndVisible()
-    }*/
+
     
     func transitionToHome() {
         if let centralVC = storyboard?.instantiateViewController(withIdentifier: "CentralVC") as? UITabBarController {
