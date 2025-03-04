@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Andromeda Logo" translatesAutoresizingMaskIntoConstraints="NO" id="Bvy-A1-gas">
+                                <rect key="frame" x="76" y="658" width="240" height="128"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="UniCenter Logo" translatesAutoresizingMaskIntoConstraints="NO" id="OiQ-Ef-9vy">
+                                <rect key="frame" x="46.666666666666657" y="226" width="299.66666666666674" height="300"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="EOQ-Z5-G21"/>
+                                    <constraint firstAttribute="height" constant="300" id="quh-Ab-Qar"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Zz-Nb-Gfx">
+                                <rect key="frame" x="153" y="583" width="87" height="65"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="By">
+                                        <attributes>
+                                            <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <font key="NSFont" size="43" name="Georgia-Italic"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UniCenter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vU1-sv-yBb">
+                                <rect key="frame" x="63" y="135" width="267" height="47"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="74" id="1iy-rP-QXz"/>
+                                    <constraint firstAttribute="width" constant="267" id="hIX-NW-ahb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="50"/>
+                                <color key="textColor" red="0.92080491779999996" green="0.2510166767" blue="0.28591022030000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" red="0.070588238540000001" green="0.1058823466" blue="0.13333332540000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="vU1-sv-yBb" secondAttribute="trailing" constant="63" id="2Za-C0-FM9"/>
+                            <constraint firstItem="Bvy-A1-gas" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="599" id="9ma-7c-ksB"/>
+                            <constraint firstItem="vU1-sv-yBb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="76" id="BdU-v9-WQl"/>
+                            <constraint firstItem="vU1-sv-yBb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="63" id="IGd-jY-gAy"/>
+                            <constraint firstItem="vU1-sv-yBb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="76" id="JG9-cL-4TG"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Jtg-BW-mqp"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Bvy-A1-gas" secondAttribute="trailing" constant="77" id="LkK-L6-Xdb"/>
+                            <constraint firstItem="7Zz-Nb-Gfx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="153" id="NrK-cc-Fry"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="top" secondItem="vU1-sv-yBb" secondAttribute="bottom" constant="44" id="Ofq-JZ-IGU"/>
+                            <constraint firstItem="7Zz-Nb-Gfx" firstAttribute="top" secondItem="OiQ-Ef-9vy" secondAttribute="bottom" constant="57" id="Q8U-Bn-6OR"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="46.670000000000002" id="RA0-de-9dU"/>
+                            <constraint firstItem="Bvy-A1-gas" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="76" id="c76-lv-b2e"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="OiQ-Ef-9vy" secondAttribute="trailing" constant="46.670000000000002" id="ccQ-iU-Hcl"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="top" secondItem="vU1-sv-yBb" secondAttribute="bottom" constant="44" id="d7W-gu-Xqa"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="167" id="hHo-Mf-quy"/>
+                            <constraint firstItem="vU1-sv-yBb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="63" id="qd8-Oo-3W9"/>
+                            <constraint firstItem="Bvy-A1-gas" firstAttribute="bottom" secondItem="7Zz-Nb-Gfx" secondAttribute="bottom" constant="138" id="u7U-Bf-SPm"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Bvy-A1-gas" secondAttribute="bottom" constant="32" id="uGR-pP-ah2"/>
+                            <constraint firstItem="OiQ-Ef-9vy" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="v2F-Jn-KyB"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="7Zz-Nb-Gfx" secondAttribute="trailing" constant="153" id="vja-po-CkD"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.671755725190835" y="374.64788732394368"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Andromeda Logo" width="3425" height="456"/>
+        <image name="UniCenter Logo" width="1024" height="1024"/>
+    </resources>
+</document>
