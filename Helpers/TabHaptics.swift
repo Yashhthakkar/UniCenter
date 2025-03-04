@@ -3,7 +3,7 @@
 //  UniConnect
 //
 //  Created by Yash Thakkar on 8/27/23.
-//
+// Need to update
 
 import UIKit
 
@@ -27,7 +27,6 @@ class TabHaptics: UITabBarController, UITabBarControllerDelegate {
         
         previousTabIndex = currentTabIndex
         
-
         let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         feedbackGenerator.prepare()
         feedbackGenerator.impactOccurred()
